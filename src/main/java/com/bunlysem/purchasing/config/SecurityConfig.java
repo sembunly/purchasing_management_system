@@ -1,6 +1,6 @@
 package com.bunlysem.purchasing.config;
 
-import com.bunlysem.purchasing.security.DatabaseUserDetailsService;
+import com.bunlysem.purchasing.modules.auth.security.DatabaseUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;

@@ -1,6 +1,6 @@
-package com.bunlysem.purchasing.repository;
+package com.bunlysem.purchasing.modules.auth.repository;
 
-import com.bunlysem.purchasing.model.UserAccount;
+import com.bunlysem.purchasing.modules.auth.model.UserAccount;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;

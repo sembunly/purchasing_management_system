@@ -1,4 +1,4 @@
-package com.bunlysem.purchasing.model;
+package com.bunlysem.purchasing.modules.auth.model;
 
 import jakarta.persistence.*;
 import java.util.HashSet;

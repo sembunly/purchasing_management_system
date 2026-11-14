@@ -1,9 +1,80 @@
-:root { --pms-primary: #2457d6; --pms-dark: #172554; }
-body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
-.login-page { min-height: 100vh; background: radial-gradient(circle at top left, #dbeafe, transparent 42%), linear-gradient(135deg, #f8fbff, #eef2ff); }
-.login-card { background: rgba(255,255,255,.96); border: 1px solid rgba(148,163,184,.25); border-radius: 1.25rem; padding: 2rem; }
-.brand-mark { display: grid; place-items: center; width: 3rem; height: 3rem; margin-bottom: 1.5rem; border-radius: .9rem; color: #fff; background: linear-gradient(135deg, var(--pms-primary), var(--pms-dark)); font-weight: 800; letter-spacing: -.05em; }
-.form-control:focus { border-color: #86a8ff; box-shadow: 0 0 0 .25rem rgba(36,87,214,.15); }
-.btn-primary { background-color: var(--pms-primary); border-color: var(--pms-primary); }
-.password-toggle { min-width: 4.5rem; }
-@media (max-width: 575.98px) { .login-card { padding: 1.5rem; border-radius: 1rem; } }
+:root {
+  --pms-blue-50:  #f3f7ff;
+  --pms-blue-100: #e3ecfc;
+  --pms-blue-200: #c9daf8;
+  --pms-blue-500: #3f6fd8;   /* buttons, links */
+  --pms-blue-600: #3560c0;   /* hover */
+  --pms-ink:      #1e2a44;   /* text on soft blue */
+  --pms-ink-soft: #4b5b7a;
+}
+
+body {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--pms-ink);
+}
+
+/* Left panel */
+.login-story {
+  background: var(--pms-blue-100);
+  color: var(--pms-ink);
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem 3.5rem;
+}
+.brand { display: flex; align-items: center; gap: .75rem; font-weight: 700; font-size: 1.15rem; }
+.brand-mark {
+  display: inline-grid; place-items: center;
+  width: 2.5rem; height: 2.5rem;
+  border-radius: .7rem;
+  background: var(--pms-blue-500); color: #fff;
+  font-weight: 800; font-size: .95rem; letter-spacing: -.03em;
+}
+.story-title {
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
+  font-weight: 700; line-height: 1.12;
+  max-width: 14ch; margin-bottom: 2.25rem;
+}
+.story-foot { color: var(--pms-ink-soft); }
+
+/* Flow list (a real sequence, so it is connected with a line) */
+.flow { list-style: none; margin: 0; padding: 0; position: relative; }
+.flow::before {
+  content: ""; position: absolute; left: 5px; top: 10px; bottom: 10px;
+  width: 2px; background: var(--pms-blue-200);
+}
+.flow li { position: relative; padding: 0 0 1.4rem 2rem; }
+.flow li:last-child { padding-bottom: 0; }
+.flow li::before {
+  content: ""; position: absolute; left: 0; top: .4rem;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--pms-blue-100); border: 2px solid var(--pms-blue-500);
+}
+.flow li:last-child::before { background: var(--pms-blue-500); }
+.flow strong { display: block; font-weight: 600; }
+.flow span { color: var(--pms-ink-soft); font-size: .92rem; }
+
+/* Right panel */
+.login-panel { background: #fff; padding: 2rem 1.25rem; }
+.login-box { width: 100%; max-width: 24rem; }
+
+.form-control { border-color: #cfd9ea; }
+.form-control:focus {
+  border-color: var(--pms-blue-500);
+  box-shadow: 0 0 0 .2rem rgba(63, 111, 216, .18);
+}
+.btn-primary {
+  --bs-btn-bg: var(--pms-blue-500);        --bs-btn-border-color: var(--pms-blue-500);
+  --bs-btn-hover-bg: var(--pms-blue-600);  --bs-btn-hover-border-color: var(--pms-blue-600);
+  --bs-btn-active-bg: var(--pms-blue-600); --bs-btn-active-border-color: var(--pms-blue-600);
+  font-weight: 600;
+}
+.password-toggle { min-width: 3.25rem; border-color: #cfd9ea; color: var(--pms-ink-soft); }
+.password-toggle:hover { background: var(--pms-blue-50); color: var(--pms-ink); border-color: #cfd9ea; }
+.password-toggle i { font-size: 1.1rem; }
+.btn:focus-visible, .form-control:focus-visible { outline: 2px solid var(--pms-blue-500); outline-offset: 2px; }
+
+/* On mobile the left panel is hidden and the form sits on soft blue */
+@media (max-width: 991.98px) {
+  .login-panel { background: var(--pms-blue-50); min-height: 100vh; }
+  .login-box { background: #fff; padding: 1.75rem; border-radius: 1rem; border: 1px solid var(--pms-blue-200); }
+}

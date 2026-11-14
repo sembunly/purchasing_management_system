@@ -1,7 +1,7 @@
-package com.bunlysem.purchasing.security;
+package com.bunlysem.purchasing.modules.auth.security;
 
-import com.bunlysem.purchasing.model.UserAccount;
-import com.bunlysem.purchasing.repository.UserAccountRepository;
+import com.bunlysem.purchasing.modules.auth.model.UserAccount;
+import com.bunlysem.purchasing.modules.auth.repository.UserAccountRepository;
 import java.util.stream.Collectors;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
