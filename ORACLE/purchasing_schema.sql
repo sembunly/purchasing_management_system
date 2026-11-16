@@ -112,6 +112,9 @@ CREATE TABLE products (
  name VARCHAR2(150) NOT NULL,
  unit VARCHAR2(30) DEFAULT 'PCS' NOT NULL,
  description VARCHAR2(500),
+ image_data BLOB,
+ image_filename VARCHAR2(255),
+ image_content_type VARCHAR2(100),
  is_active NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
  CONSTRAINT uq_products_sku UNIQUE(sku),
@@ -157,6 +160,9 @@ CREATE TABLE purchase_orders (
  order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
  status VARCHAR2(20) DEFAULT 'DRAFT' NOT NULL,
  notes VARCHAR2(500),
+ report_file BLOB,
+ report_filename VARCHAR2(255),
+ report_content_type VARCHAR2(100),
  is_active NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
  CONSTRAINT uq_purchase_orders_no UNIQUE(order_no),
@@ -295,4 +301,29 @@ INSERT INTO module_details(role_id,module_id,action_code,is_allowed)
  CROSS JOIN (SELECT 'VIEW' action_code FROM dual UNION ALL SELECT 'CREATE' FROM dual
  UNION ALL SELECT 'EDIT' FROM dual UNION ALL SELECT 'DELETE' FROM dual
  UNION ALL SELECT 'APPROVE' FROM dual) a WHERE r.name='ADMIN';
+
+ INSERT INTO categories (name, description, is_active)
+VALUES ('Electronics', 'Electronic devices and equipment', 1);
+
+INSERT INTO categories (name, description, is_active)
+VALUES ('Office Supplies', 'Office stationery and supplies', 1);
+
+INSERT INTO categories (name, description, is_active)
+VALUES ('Furniture', 'Office furniture and accessories', 1);
+
+INSERT INTO categories (name, description, is_active)
+VALUES ('Computer Equipment', 'Computers, laptops and accessories', 1);
+
+INSERT INTO categories (name, description, is_active)
+VALUES ('Networking', 'Routers, switches and network equipment', 1);
+
+INSERT INTO categories (name, description, is_active)
+VALUES ('Cleaning Supplies', 'Cleaning materials and equipment', 1);
+
+INSERT INTO categories (name, description, is_active)
+VALUES ('Medical Supplies', 'Medical equipment and consumables', 1);
+
+INSERT INTO categories (name, description, is_active)
+VALUES ('Printing Supplies', 'Printers, ink and toner', 1);
+
 COMMIT;

@@ -1,0 +1,31 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside th:fragment="sidebar" class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" aria-label="Main navigation">
+    <div class="sidebar-brand"><span class="brand-mark" aria-hidden="true">PM</span> Purchasing</div>
+    <nav class="side-nav" aria-label="Modules">
+        <div th:each="group : ${@navigationService.groups(#authentication)}">
+            <div class="side-group" th:unless="${group.name == 'Main'}" th:text="${group.name}">Group</div>
+            <a th:each="item : ${group.items}" th:href="${item.path}"
+               th:classappend="${item.code == activeCode ? 'active' : ''}"
+               th:attr="aria-current=${item.code == activeCode ? 'page' : null}">
+                <i class="bi" aria-hidden="true" th:classappend="${
+                    item.code == 'DASHBOARD' ? 'bi-grid-1x2' :
+                    item.code == 'REQUESTS' ? 'bi-file-earmark-plus' :
+                    item.code == 'ORDERS' ? 'bi-bag-check' :
+                    item.code == 'RECEIPTS' ? 'bi-box-seam' :
+                    item.code == 'PAYMENTS' ? 'bi-credit-card' :
+                    item.code == 'PRODUCTS' ? 'bi-tags' :
+                    item.code == 'SUPPLIERS' ? 'bi-truck' :
+                    item.code == 'CATEGORIES' ? 'bi-diagram-3' :
+                    item.code == 'DEPARTMENTS' ? 'bi-building' :
+                    item.code == 'USERS' ? 'bi-people' :
+                    item.code == 'PERMISSIONS' ? 'bi-shield-check' :
+                    item.code.endsWith('_REPORT') ? 'bi-bar-chart' : 'bi-circle'}"></i>
+                <span th:text="${item.name}">Module</span>
+            </a>
+        </div>
+    </nav>
+</aside>
+</body>
+</html>

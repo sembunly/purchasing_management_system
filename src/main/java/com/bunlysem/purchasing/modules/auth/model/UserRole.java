@@ -22,4 +22,8 @@ public class UserRole {
 
     public Role getRole() { return role; }
     public Integer getIsActive() { return isActive; }
+
+    public void setUser(UserAccount user) { this.user = user; }
+    public void setRole(Role role) { this.role = role; }
+    public void setIsActive(Integer isActive) { this.isActive = isActive; }
 }

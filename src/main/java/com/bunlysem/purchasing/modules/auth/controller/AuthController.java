@@ -9,4 +9,9 @@ public class AuthController {
     String login() {
         return "auth/login";
     }
+
+    @GetMapping("/access-denied")
+    String accessDenied() {
+        return "error/403";
+    }
 }
