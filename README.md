@@ -56,8 +56,10 @@ Browser → Thymeleaf → Controller → Service → Repository → Oracle DB
 
 ## Documentation
 
-- `doc/connectorcreatedb.md` — Database setup
+- `doc/connectorcreatedb.md` — Database setup with Docker
+- `doc/run-without-docker.md` — Run locally without Docker
 - `doc/workflow.md` — System workflow
+- `doc/pages.md` — How to access the app: login, page URLs, permissions
 
 ## Project Purpose
 
