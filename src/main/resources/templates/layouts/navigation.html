@@ -18,10 +18,11 @@
         <a th:href="@{/reports/purchasing}" th:classappend="${activeCode == 'PURCHASING_REPORT' ? 'active' : ''}"><i class="bi bi-bar-chart"></i><span>Purchasing report</span></a>
         <a th:href="@{/reports/receiving}" th:classappend="${activeCode == 'RECEIVING_REPORT' ? 'active' : ''}"><i class="bi bi-bar-chart"></i><span>Receiving report</span></a>
         <a th:href="@{/reports/payments}" th:classappend="${activeCode == 'PAYMENT_REPORT' ? 'active' : ''}"><i class="bi bi-bar-chart"></i><span>Payment report</span></a>
-        <a th:href="@{/reports/orders}"><i class="bi bi-clipboard-data"></i><span>Order report</span></a>
-        <a th:href="@{/reports/suppliers}"><i class="bi bi-truck"></i><span>Supplier report</span></a>
-        <a th:href="@{/payment-methods}" th:classappend="${activeCode == 'PAYMENT_METHODS' ? 'active' : ''}"><i class="bi bi-credit-card"></i><span>Payment methods</span></a>
+        <a th:href="@{/reports/orders}" th:classappend="${activeCode == 'ORDERS_REPORT' ? 'active' : ''}"><i class="bi bi-clipboard-data"></i><span>Order report</span></a>
+        <a th:href="@{/reports/suppliers}" th:classappend="${activeCode == 'SUPPLIERS_REPORT' ? 'active' : ''}"><i class="bi bi-truck"></i><span>Supplier report</span></a>
+        <div class="side-group">Finance</div>
         <a th:href="@{/payments}" th:classappend="${activeCode == 'PAYMENTS' ? 'active' : ''}"><i class="bi bi-cash-stack"></i><span>Payments</span></a>
+        <a th:href="@{/payment-methods}" th:classappend="${activeCode == 'PAYMENT_METHODS' ? 'active' : ''}"><i class="bi bi-credit-card"></i><span>Payment methods</span></a>
         <div class="side-group">Settings</div>
         <a th:href="@{/settings/users}" th:classappend="${activeCode == 'USERS' ? 'active' : ''}"><i class="bi bi-people"></i><span>Users</span></a>
     </nav>
