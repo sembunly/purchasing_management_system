@@ -3409,9 +3409,6 @@ const { svg } = await mermaid.render('erd-svg', `erDiagram
   departments ||--o{ users : has
   users ||--o{ user_roles : has
   roles ||--o{ user_roles : assigned
-  module_types ||--o{ modules : groups
-  roles ||--o{ module_details : permits
-  modules ||--o{ module_details : secured
   categories ||--o{ products : contains
   departments ||--o{ purchase_requests : raises
   users ||--o{ purchase_requests : requested_by
@@ -3453,27 +3450,6 @@ const { svg } = await mermaid.render('erd-svg', `erDiagram
     number id PK
     number user_id FK
     number role_id FK
-  }
-  module_types {
-    number id PK
-    varchar2 code UK
-    varchar2 name
-    number sort_order
-  }
-  modules {
-    number id PK
-    number module_type_id FK
-    varchar2 code UK
-    varchar2 name
-    varchar2 route_path
-    number sort_order
-  }
-  module_details {
-    number id PK
-    number role_id FK
-    number module_id FK
-    varchar2 action_code
-    number is_allowed
   }
   suppliers {
     number id PK

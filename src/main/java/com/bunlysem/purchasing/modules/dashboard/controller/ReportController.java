@@ -3,7 +3,6 @@ package com.bunlysem.purchasing.modules.dashboard.controller;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,6 @@ public class ReportController {
     public record Row(String reference, String detail, LocalDateTime date, String status, BigDecimal amount) { }
 
     @GetMapping("/purchasing")
-    @PreAuthorize("@permissionService.hasPermission(authentication,'REQUESTS','VIEW')")
     String purchasing(Model model) {
         model.addAttribute("activeCode", "PURCHASING_REPORT");
         model.addAttribute("title", "Purchasing Report");
@@ -34,7 +32,6 @@ public class ReportController {
     }
 
     @GetMapping("/receiving")
-    @PreAuthorize("@permissionService.hasPermission(authentication,'RECEIPTS','VIEW')")
     String receiving(Model model) {
         model.addAttribute("activeCode", "RECEIVING_REPORT");
         model.addAttribute("title", "Receiving Report");
@@ -52,7 +49,6 @@ public class ReportController {
     }
 
     @GetMapping("/payments")
-    @PreAuthorize("@permissionService.hasPermission(authentication,'PAYMENTS','VIEW')")
     String payments(Model model) {
         model.addAttribute("activeCode", "PAYMENT_REPORT");
         model.addAttribute("title", "Payment Report");

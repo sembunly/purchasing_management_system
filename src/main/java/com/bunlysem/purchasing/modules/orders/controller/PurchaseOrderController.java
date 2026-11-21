@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import org.springframework.http.*;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,7 @@ public class PurchaseOrderController {
         this.jdbc = jdbc; this.reports = reports;
     }
 
-    @GetMapping @PreAuthorize("@permissionService.hasPermission(authentication,'ORDERS','VIEW')")
+    @GetMapping
     String list(Model model) {
         model.addAttribute("activeCode", "ORDERS");
         model.addAttribute("orders", jdbc.query("""
@@ -36,14 +35,14 @@ public class PurchaseOrderController {
     }
     public record OrderRow(Long id, String number, LocalDate date, String status, String supplier, boolean hasReport) { }
 
-    @PostMapping("/{id}/report") @PreAuthorize("@permissionService.hasPermission(authentication,'ORDERS','EDIT')")
+    @PostMapping("/{id}/report")
     String generate(@PathVariable Long id, RedirectAttributes redirect) throws IOException {
         reports.generate(id);
         redirect.addFlashAttribute("success", "PDF report generated and saved.");
         return "redirect:/orders";
     }
 
-    @GetMapping("/{id}/report") @PreAuthorize("@permissionService.hasPermission(authentication,'ORDERS','VIEW')")
+    @GetMapping("/{id}/report")
     ResponseEntity<byte[]> report(@PathVariable Long id, @RequestParam(defaultValue = "false") boolean download) {
         PurchaseOrder order = reports.get(id);
         if (order.getReportFile() == null) return ResponseEntity.notFound().build();

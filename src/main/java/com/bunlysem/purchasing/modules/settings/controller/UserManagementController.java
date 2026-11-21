@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,7 +31,6 @@ public class UserManagementController {
     }
 
     @GetMapping
-    @PreAuthorize("@permissionService.hasPermission(authentication, 'USERS', 'VIEW')")
     String list(@RequestParam(defaultValue = "") String search,
                 @PageableDefault(size = 10, sort = "username") Pageable pageable, Model model) {
         model.addAttribute("activeCode", "USERS");
@@ -43,14 +41,12 @@ public class UserManagementController {
     }
 
     @GetMapping("/new")
-    @PreAuthorize("@permissionService.hasPermission(authentication, 'USERS', 'CREATE')")
     String createForm(Model model) {
         model.addAttribute("userForm", new UserForm());
         return form(model, "Create user");
     }
 
     @PostMapping
-    @PreAuthorize("@permissionService.hasPermission(authentication, 'USERS', 'CREATE')")
     String create(@Valid @ModelAttribute UserForm userForm, BindingResult result, Model model,
                   RedirectAttributes redirect) {
         if (result.hasErrors()) return form(model, "Create user", false, null);
@@ -65,7 +61,6 @@ public class UserManagementController {
     }
 
     @GetMapping("/{id}/edit")
-    @PreAuthorize("@permissionService.hasPermission(authentication, 'USERS', 'EDIT')")
     String editForm(@PathVariable Long id, Model model) {
         UserAccount user = userManagement.get(id);
         UserForm form = new UserForm();
@@ -79,7 +74,6 @@ public class UserManagementController {
     }
 
     @PostMapping("/{id}")
-    @PreAuthorize("@permissionService.hasPermission(authentication, 'USERS', 'EDIT')")
     String update(@PathVariable Long id, @Valid @ModelAttribute UserForm userForm, BindingResult result,
                   Model model, RedirectAttributes redirect) {
         if (result.hasErrors()) return form(model, "Edit user", true, id);
@@ -94,7 +88,6 @@ public class UserManagementController {
     }
 
     @PostMapping("/{id}/deactivate")
-    @PreAuthorize("@permissionService.hasPermission(authentication, 'USERS', 'DELETE')")
     String deactivate(@PathVariable Long id, RedirectAttributes redirect) {
         userManagement.setActive(id, false);
         redirect.addFlashAttribute("success", "User deactivated.");
@@ -102,7 +95,6 @@ public class UserManagementController {
     }
 
     @PostMapping("/{id}/activate")
-    @PreAuthorize("@permissionService.hasPermission(authentication, 'USERS', 'EDIT')")
     String activate(@PathVariable Long id, RedirectAttributes redirect) {
         userManagement.setActive(id, true);
         redirect.addFlashAttribute("success", "User activated.");

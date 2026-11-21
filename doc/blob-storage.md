@@ -1,8 +1,10 @@
 # Product images and purchase order PDFs
 
-The database still has 18 tables. New installations use `ORACLE/purchasing_schema.sql`.
+The database has 15 tables. New installations use `ORACLE/purchasing_schema.sql`.
 For an existing database, run `ORACLE/blob_migration.sql` as `purchasing_user`
 before starting the application (`ddl-auto: validate` checks the columns).
+Also run `ORACLE/remove_module_permission_tables.sql` once to remove the retired
+module permission tables.
 
 Products: `/products` lists active products. Create or edit a product to upload
 a JPG/PNG image (maximum 5 MB). The saved image can be previewed and displayed;
@@ -14,6 +16,5 @@ the order header and active lines, then stores it in `report_file`. View / Print
 opens the saved PDF inline in a browser; Download sends it as an attachment.
 Orders and their lines must already exist in the database.
 
-Permissions use the existing `module_details` matrix: PRODUCTS VIEW/CREATE/EDIT/DELETE
-and ORDERS VIEW/EDIT. PDFBox's built-in font covers Latin text; non-Latin order
-names currently appear as `?` in generated PDFs.
+PDFBox's built-in font covers Latin text; non-Latin order names currently appear
+as `?` in generated PDFs.

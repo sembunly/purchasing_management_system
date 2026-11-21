@@ -5,7 +5,6 @@ import com.bunlysem.purchasing.modules.products.service.ProductService;
 import java.io.IOException;
 import org.springframework.http.*;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,7 @@ public class ProductController {
         this.jdbc = jdbc; this.products = products;
     }
 
-    @GetMapping @PreAuthorize("@permissionService.hasPermission(authentication,'PRODUCTS','VIEW')")
+    @GetMapping
     String list(Model model) {
         model.addAttribute("activeCode", "PRODUCTS");
         model.addAttribute("products", jdbc.query("""
@@ -44,10 +43,10 @@ public class ProductController {
         return "redirect:/products/new";
     }
 
-    @GetMapping("/new") @PreAuthorize("@permissionService.hasPermission(authentication,'PRODUCTS','CREATE')")
+    @GetMapping("/new")
     String create(Model model) { return form(model, null); }
 
-    @GetMapping("/{id}/edit") @PreAuthorize("@permissionService.hasPermission(authentication,'PRODUCTS','EDIT')")
+    @GetMapping("/{id}/edit")
     String edit(@PathVariable Long id, Model model) { return form(model, products.get(id)); }
 
     private String form(Model model, Product product) {
@@ -59,14 +58,14 @@ public class ProductController {
     }
     public record CategoryRow(Long id, String name) { }
 
-    @PostMapping @PreAuthorize("@permissionService.hasPermission(authentication,'PRODUCTS','CREATE')")
+    @PostMapping
     String create(@RequestParam Long categoryId, @RequestParam String sku, @RequestParam String name,
                   @RequestParam String unit, @RequestParam(required = false) String description,
                   @RequestParam(required = false) MultipartFile image, RedirectAttributes redirect, Model model) throws IOException {
         return save(null, categoryId, sku, name, unit, description, image, redirect, model);
     }
 
-    @PostMapping("/{id}") @PreAuthorize("@permissionService.hasPermission(authentication,'PRODUCTS','EDIT')")
+    @PostMapping("/{id}")
     String update(@PathVariable Long id, @RequestParam Long categoryId, @RequestParam String sku, @RequestParam String name,
                   @RequestParam String unit, @RequestParam(required = false) String description,
                   @RequestParam(required = false) MultipartFile image, RedirectAttributes redirect, Model model) throws IOException {
@@ -86,12 +85,12 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/{id}/deactivate") @PreAuthorize("@permissionService.hasPermission(authentication,'PRODUCTS','DELETE')")
+    @PostMapping("/{id}/deactivate")
     String deactivate(@PathVariable Long id, RedirectAttributes redirect) {
         products.deactivate(id); redirect.addFlashAttribute("success", "Product deactivated."); return "redirect:/products";
     }
 
-    @GetMapping("/{id}/image") @PreAuthorize("@permissionService.hasPermission(authentication,'PRODUCTS','VIEW')")
+    @GetMapping("/{id}/image")
     ResponseEntity<byte[]> image(@PathVariable Long id) {
         Product product = products.get(id);
         if (product.getImageData() == null) return ResponseEntity.notFound().build();

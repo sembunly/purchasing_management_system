@@ -2,7 +2,6 @@ package com.bunlysem.purchasing.modules.dashboard.controller;
 
 import com.bunlysem.purchasing.modules.dashboard.service.DashboardService;
 import org.springframework.stereotype.Controller;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -13,7 +12,6 @@ public class DashboardController {
     public DashboardController(DashboardService dashboardService) { this.dashboardService = dashboardService; }
 
     @GetMapping({"/", "/dashboard"})
-    @PreAuthorize("@permissionService.hasPermission(authentication, 'DASHBOARD', 'VIEW')")
     String dashboard(Model model) {
         model.addAttribute("activeCode", "DASHBOARD");
         model.addAttribute("totals", dashboardService.totals());

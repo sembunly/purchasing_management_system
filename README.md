@@ -6,14 +6,13 @@ A monolithic web application for managing purchasing operations, built for an Or
 
 - **Backend:** Spring Boot 4, Java 21, Spring Data JPA
 - **Frontend:** HTML, Thymeleaf, Bootstrap 5, JavaScript
-- **Security:** Spring Security, BCrypt, Role-Based Permissions
+- **Security:** Spring Security, BCrypt
 - **Database:** Oracle Database (26ai)
 - **Infrastructure:** Docker Compose
 
 ## Features
 
 - User and Role Management
-- Dynamic Module Permissions
 - Supplier, Category, Product and Department Management
 - Purchase Requests and Approvals
 - Purchase Orders
@@ -23,11 +22,11 @@ A monolithic web application for managing purchasing operations, built for an Or
 
 ## Database Design
 
-18 tables organized into five groups:
+15 tables organized into five groups:
 
 | Group | Tables |
 |---|---|
-| Security | users, roles, user_roles, module_types, modules, module_details |
+| Security | users, roles, user_roles |
 | Master Data | departments, suppliers, categories, products |
 | Purchasing | purchase_requests, purchase_request_details, purchase_orders, purchase_order_details |
 | Receiving | goods_receipts, goods_receipt_details |
