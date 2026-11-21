@@ -1,51 +1,97 @@
 # Purchasing Management System
 
-A Spring Boot web application for managing purchasing requests, orders, receipts, and payments with Oracle Database.
+A web-based Purchasing Management System built with Spring Boot 4 and Oracle Database, covering the complete purchasing process from request to payment.
 
-## Technology
+## Tech Stack
 
-- Java 21 and Spring Boot 4
-- Spring MVC, Spring Data JPA, and JDBC
-- Thymeleaf, Bootstrap 5, and JavaScript
-- Oracle Database Free (23ai/26ai compatible)
+- Java 21, Spring Boot 4
+- Spring MVC, Spring Data JPA, JDBC
+- Thymeleaf, Bootstrap 5
+- Oracle Database Free
 - Docker Compose
+
+## Requirements
+
+- Docker Desktop
+- Java 21 (for local development)
+
+## Getting Started
+
+Start the application and Oracle Database:
+
+```bash
+docker compose up -d --build
+```
+
+Check running containers:
+
+```bash
+docker compose ps
+```
+
+View application logs:
+
+```bash
+docker compose logs -f spring-app
+```
+
+For a fresh database, initialize the schema and demo data using:
+
+- `ORACLE/purchasing_schema.sql`
+- `ORACLE/demo_data.sql`
+
+See [Database Setup](doc/run-without-docker.md) for instructions.
+
+## Access
+
+Open http://localhost:8080
+
+**Demo Account**
+
+| Username | Password |
+|---|---|
+| `admin` | `1` |
+
+For local demonstration only. Change the default password before deployment.
 
 ## Modules
 
-- Authentication and user management
-- Departments, suppliers, categories, and products
-- Purchase requests with approval and rejection
-- Purchase orders created from approved requests
-- Goods receipts with partial receiving
-- Payment methods and partial payments
-- Date- and status-filtered reports
-- Dashboard with live totals, charts, and recent activity
+- Dashboard
+- Departments and Suppliers
+- Categories and Products
+- Purchase Requests and Approvals
+- Purchase Orders
+- Goods Receipts
+- Payment Methods and Payments
+- Reports
 
-The application uses soft deletion through `is_active`. Database tables are defined in `ORACLE/purchasing_schema.sql`; the application does not require additional tables.
+## Purchasing Workflow
 
-## Setup
-
-Configure Oracle connection properties in `src/main/resources/application.yaml`. The default local connection uses service `FREEPDB1`, port `1522`, and schema user `PURCHASING_USER`.
-
-Start Oracle using Docker Compose and run the application:
-
-```bash
-docker compose up -d
-./mvnw spring-boot:run
+```text
+Purchase Request
+       |
+       v
+Approval / Rejection
+       |
+       v
+Purchase Order
+       |
+       v
+Goods Receipt
+       |
+       v
+Payment
+       |
+       v
+Reports
 ```
 
-Open [http://localhost:8080](http://localhost:8080). Initialize a new database by running `ORACLE/purchasing_schema.sql` with the required Oracle privileges. To stop the database container, run:
+The system supports purchase request approvals, purchase orders, partial or full goods receipts, and payment tracking.
+
+## Stop Application
 
 ```bash
 docker compose down
 ```
 
-## Workflow
-
-Create a purchase request with product lines and save it as `DRAFT` or submit it as `PENDING`. A pending request may be approved or rejected; the rejection reason is stored in the existing notes field. Create an order from an approved request, select a supplier, and enter order quantities and prices. Record one or more goods receipts, up to the ordered quantity; order status becomes `PARTIAL` or `RECEIVED`. Record payments against an order; partial payments are supported and payments cannot exceed the remaining order balance. Use reports to filter purchasing activity by date and status and print results.
-
-## Documentation
-
-- `ORACLE/purchasing_schema.sql` — Oracle schema and reference data
-- `doc/purchasing_workflow.xml` — Structured purchasing workflow
-- `doc/run-without-docker.md` — Local run instructions
+Database data is persisted in a Docker volume.
