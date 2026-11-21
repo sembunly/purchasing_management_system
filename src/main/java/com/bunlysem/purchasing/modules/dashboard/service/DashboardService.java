@@ -15,7 +15,7 @@ public class DashboardService {
     public DashboardService(EntityManager entityManager) { this.entityManager = entityManager; }
 
     public record Totals(long products, long suppliers, long requests, long orders,
-                         long pending, BigDecimal spending) { }
+                         long pending, long receipts, long payments, BigDecimal spending) { }
     public record StatusCount(String name, long count, int percent) { }
     public record DepartmentSpend(String name, BigDecimal amount, int percent) { }
     public record Activity(String type, String reference, String detail, String status, LocalDateTime date) { }
@@ -27,6 +27,8 @@ public class DashboardService {
                    (select count(*) from purchase_requests where is_active=1),
                    (select count(*) from purchase_orders where is_active=1),
                    (select count(*) from purchase_requests where is_active=1 and status='PENDING'),
+                   (select count(*) from goods_receipts where is_active=1),
+                   (select count(*) from payments where is_active=1),
                    (select coalesce(sum(p.amount),0) from payments p
                     join purchase_orders po on po.id=p.purchase_order_id
                     where p.is_active=1 and po.is_active=1)
@@ -34,7 +36,8 @@ public class DashboardService {
             """).getSingleResult();
         return new Totals(number(values[0]).longValue(), number(values[1]).longValue(),
             number(values[2]).longValue(), number(values[3]).longValue(),
-            number(values[4]).longValue(), decimal(values[5]));
+            number(values[4]).longValue(), number(values[5]).longValue(),
+            number(values[6]).longValue(), decimal(values[7]));
     }
 
     public List<StatusCount> requestStatuses() {
@@ -78,6 +81,10 @@ public class DashboardService {
               select 'Receipt',gr.receipt_no,po.order_no,'RECEIVED',gr.received_at
               from goods_receipts gr join purchase_orders po on po.id=gr.purchase_order_id
               where gr.is_active=1 and po.is_active=1
+              union all
+              select 'Payment',p.payment_no,po.order_no,'PAID',p.payment_date
+              from payments p join purchase_orders po on po.id=p.purchase_order_id
+              where p.is_active=1 and po.is_active=1
             ) order by event_date desc fetch first 8 rows only
             """).stream().map(row -> new Activity((String) row[0], (String) row[1],
                 (String) row[2], (String) row[3],
