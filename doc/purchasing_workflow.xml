@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<purchasingWorkflow system="Purchasing Management System">
+  <description>End-to-end purchasing lifecycle supported by the application and existing Oracle schema.</description>
+  <stages>
+    <stage number="1" name="Purchase Request">
+      <tables>
+        <table name="purchase_requests" />
+        <table name="purchase_request_details" />
+      </tables>
+      <actions>
+        <action>Create a request with an active department and one or more active products.</action>
+        <action>Enter a positive quantity and a non-negative estimated unit price for each product.</action>
+        <action>Save as DRAFT or submit as PENDING.</action>
+      </actions>
+      <statuses>DRAFT, PENDING, APPROVED, REJECTED, CANCELLED</statuses>
+    </stage>
+
+    <stage number="2" name="Approval">
+      <input status="PENDING" />
+      <actions>
+        <action outcome="APPROVED">Record the approver in approved_by and the approval time in approved_at.</action>
+        <action outcome="REJECTED">Require a rejection reason and store it in the existing notes column.</action>
+      </actions>
+      <rules>
+        <rule>Only PENDING requests can be approved or rejected.</rule>
+        <rule>Approved requests cannot be edited through the request workflow.</rule>
+      </rules>
+      <next stage="Purchase Order" condition="status is APPROVED" />
+    </stage>
+
+    <stage number="3" name="Purchase Order">
+      <tables>
+        <table name="purchase_orders" />
+        <table name="purchase_order_details" />
+      </tables>
+      <actions>
+        <action>Create at most one active order for an approved request.</action>
+        <action>Select an active supplier and specify order quantities and unit prices.</action>
+        <action>Calculate order value as the sum of quantity multiplied by unit price.</action>
+      </actions>
+      <statuses>DRAFT, ORDERED, PARTIAL, RECEIVED, CANCELLED</statuses>
+      <next stage="Goods Receipt" condition="order status is ORDERED or PARTIAL" />
+    </stage>
+
+    <stage number="4" name="Goods Receipt">
+      <tables>
+        <table name="goods_receipts" />
+        <table name="goods_receipt_details" />
+      </tables>
+      <actions>
+        <action>Record receipt quantities against purchase order detail lines.</action>
+        <action>Support multiple receipts against an order for partial delivery.</action>
+      </actions>
+      <rules>
+        <rule>Cumulative received quantity for a line cannot exceed its ordered quantity.</rule>
+        <rule>Set the order to PARTIAL while any quantity remains outstanding.</rule>
+        <rule>Set the order to RECEIVED when all active order lines are fully received.</rule>
+      </rules>
+      <next stage="Payment" condition="order exists and is not CANCELLED" />
+    </stage>
+
+    <stage number="5" name="Payment">
+      <tables>
+        <table name="payments" />
+        <table name="payment_methods" />
+      </tables>
+      <actions>
+        <action>Record payment against an active purchase order using an active payment method.</action>
+        <action>Allow multiple payments so an order can be paid in partial amounts.</action>
+      </actions>
+      <rules>
+        <rule>Payment amount must be greater than zero.</rule>
+        <rule>Cumulative active payments cannot exceed the order total.</rule>
+        <rule>Paid amount is the sum of active payments; remaining balance is order total minus paid amount.</rule>
+      </rules>
+      <paymentStatus>Payments are recorded as individual payment rows; the schema has no separate payment status column.</paymentStatus>
+    </stage>
+
+    <stage number="6" name="Reports">
+      <pages>
+        <page path="/reports/purchasing">Purchase requests with date and request status filters.</page>
+        <page path="/reports/orders">Purchase orders with date and order status filters.</page>
+        <page path="/reports/receiving">Goods receipts with date and related order status filters.</page>
+        <page path="/reports/suppliers">Supplier order activity with date and related order status filters.</page>
+        <page path="/reports/payments">Payments with date and related order status filters.</page>
+      </pages>
+      <features>Summary totals and printable report pages.</features>
+    </stage>
+  </stages>
+  <dataPolicy>
+    <softDeleteColumn>is_active</softDeleteColumn>
+    <schemaChanges>false</schemaChanges>
+  </dataPolicy>
+</purchasingWorkflow>
