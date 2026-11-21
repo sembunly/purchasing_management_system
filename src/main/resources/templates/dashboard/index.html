@@ -11,6 +11,8 @@
 <div class="dashboard-metric"><span class="stat-icon"><i class="bi bi-file-earmark-text"></i></span><div><small>Purchase requests</small><b th:text="${totals.requests}">0</b></div></div>
 <div class="dashboard-metric"><span class="stat-icon"><i class="bi bi-bag-check"></i></span><div><small>Purchase orders</small><b th:text="${totals.orders}">0</b></div></div>
 <div class="dashboard-metric"><span class="stat-icon"><i class="bi bi-hourglass-split"></i></span><div><small>Pending approvals</small><b th:text="${totals.pending}">0</b></div></div>
+<div class="dashboard-metric"><span class="stat-icon"><i class="bi bi-box-seam"></i></span><div><small>Goods receipts</small><b th:text="${totals.receipts}">0</b></div></div>
+<div class="dashboard-metric"><span class="stat-icon"><i class="bi bi-credit-card"></i></span><div><small>Payments</small><b th:text="${totals.payments}">0</b></div></div>
 <div class="dashboard-metric"><span class="stat-icon"><i class="bi bi-cash-stack"></i></span><div><small>Total spending · paid</small><b th:text="${#numbers.formatDecimal(totals.spending,1,'COMMA',2,'POINT')}">0.00</b></div></div>
 </section>
 <div class="row g-4"><div class="col-xl-6"><section class="panel dashboard-panel"><div class="panel-head"><h2>Requests by status</h2></div><p class="empty" th:if="${#lists.isEmpty(requestStatuses)}">No active requests yet.</p><div class="bars" th:each="item : ${requestStatuses}"><div class="bar-label"><span th:text="${#strings.capitalize(#strings.toLowerCase(item.name))}">Pending</span><span th:text="${item.count}">0</span></div><div class="track"><span th:style="|width:${item.percent}%|"></span></div></div></section></div>
