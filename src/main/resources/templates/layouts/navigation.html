@@ -7,9 +7,12 @@
         <a th:href="@{/dashboard}" th:classappend="${activeCode == 'DASHBOARD' ? 'active' : ''}"><i class="bi bi-grid-1x2"></i><span>Dashboard</span></a>
         <div class="side-group">Purchasing</div>
         <a th:href="@{/orders}" th:classappend="${activeCode == 'ORDERS' ? 'active' : ''}"><i class="bi bi-bag-check"></i><span>Purchase orders</span></a>
+        <a th:href="@{/requests}" th:classappend="${activeCode == 'REQUESTS' ? 'active' : ''}"><i class="bi bi-file-earmark-plus"></i><span>Purchase requests</span></a>
         <div class="side-group">Master Data</div>
         <a th:href="@{/products}" th:classappend="${activeCode == 'PRODUCTS' ? 'active' : ''}"><i class="bi bi-tags"></i><span>Products</span></a>
         <a th:href="@{/categories}" th:classappend="${activeCode == 'CATEGORIES' ? 'active' : ''}"><i class="bi bi-diagram-3"></i><span>Categories</span></a>
+        <a th:href="@{/suppliers}" th:classappend="${activeCode == 'SUPPLIERS' ? 'active' : ''}"><i class="bi bi-truck"></i><span>Suppliers</span></a>
+        <a th:href="@{/departments}" th:classappend="${activeCode == 'DEPARTMENTS' ? 'active' : ''}"><i class="bi bi-building"></i><span>Departments</span></a>
         <div class="side-group">Reports</div>
         <a th:href="@{/reports/purchasing}" th:classappend="${activeCode == 'PURCHASING_REPORT' ? 'active' : ''}"><i class="bi bi-bar-chart"></i><span>Purchasing report</span></a>
         <a th:href="@{/reports/receiving}" th:classappend="${activeCode == 'RECEIVING_REPORT' ? 'active' : ''}"><i class="bi bi-bar-chart"></i><span>Receiving report</span></a>
