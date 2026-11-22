@@ -17,7 +17,11 @@ public class ReportController {
         m.addAttribute("title",title);m.addAttribute("activeCode",active);m.addAttribute("amountLabel",label);m.addAttribute("from",from);m.addAttribute("to",to);m.addAttribute("statusFilter",status);
         LocalDateTime start=from==null||from.isBlank()?LocalDate.of(2000,1,1).atStartOfDay():LocalDate.parse(from).atStartOfDay();
         LocalDateTime end=to==null||to.isBlank()?LocalDate.of(2999,12,31).atTime(23,59,59):LocalDate.parse(to).atTime(23,59,59);
-        var rows=jdbc.query(sql,(rs,n)->new Row(rs.getString(1),rs.getString(2),rs.getTimestamp(3).toLocalDateTime(),rs.getString(4),rs.getBigDecimal(5)),start,end,status==null||status.isBlank()?"%":status);
+        var rows=jdbc.query(sql,(rs,n)->{
+            var timestamp = rs.getTimestamp(3);
+            return new Row(rs.getString(1), rs.getString(2),
+                timestamp == null ? null : timestamp.toLocalDateTime(), rs.getString(4), rs.getBigDecimal(5));
+        },start,end,status==null||status.isBlank()?"%":status);
         m.addAttribute("rows",rows);m.addAttribute("total",rows.stream().map(Row::amount).filter(java.util.Objects::nonNull).reduce(BigDecimal.ZERO,BigDecimal::add));
     }
     @GetMapping("/purchasing") String purchasing(@RequestParam(required=false) String from,@RequestParam(required=false) String to,@RequestParam(defaultValue="") String status,Model m){set(m,"Purchase Requests Report","PURCHASING_REPORT","Estimated value","select pr.request_no,d.name,pr.request_date,pr.status,coalesce(sum(rd.quantity*rd.estimated_unit_price),0) amount from purchase_requests pr join departments d on d.id=pr.department_id left join purchase_request_details rd on rd.purchase_request_id=pr.id and rd.is_active=1 where pr.is_active=1 and pr.request_date between ? and ? and pr.status like ? group by pr.id,pr.request_no,d.name,pr.request_date,pr.status order by pr.request_date desc",from,to,status);return "dashboard/report";}
