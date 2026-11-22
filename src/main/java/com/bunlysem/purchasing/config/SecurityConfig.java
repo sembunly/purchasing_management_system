@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
@@ -18,6 +19,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/css/**", "/js/**").permitAll()
                 .requestMatchers("/login", "/access-denied").permitAll()
+                .requestMatchers(HttpMethod.POST, "/requests/*/approve", "/requests/*/reject")
+                    .hasAnyRole("ADMIN", "MANAGER")
                 .anyRequest().authenticated())
             .exceptionHandling(errors -> errors.accessDeniedPage("/access-denied"))
             .formLogin(form -> form
