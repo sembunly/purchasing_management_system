@@ -27,7 +27,7 @@ public class SupplierController {
         return "suppliers/index";
     }
 
-    @GetMapping("/new") String createForm(Model model) { return form(model, null); }
+    @GetMapping("/new") String createForm(Model model) { return form(model, new Supplier()); }
     @GetMapping("/{id}") String details(@PathVariable Long id, Model model) {
         model.addAttribute("activeCode", "SUPPLIERS");
         model.addAttribute("supplier", supplierService.get(id));
