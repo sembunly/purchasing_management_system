@@ -1,0 +1,15 @@
+name: shared-oracle
+services:
+  oracle-db:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle_db
+    restart: unless-stopped
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PWD: ${ORACLE_ADMIN_PASSWORD:?Set ORACLE_ADMIN_PASSWORD}
+    volumes:
+      - oracle_db_data:/opt/oracle/oradata
+
+volumes:
+  oracle_db_data:
