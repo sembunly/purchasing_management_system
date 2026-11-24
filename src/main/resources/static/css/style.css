@@ -166,6 +166,18 @@ body.app { background: var(--pms-blue-50); }
 .settings-form-page { max-width: 860px; margin: 0 auto; }
 .form-panel { height: auto; }
 .role-choice { display: block; padding: .65rem .8rem; background: var(--pms-blue-50); border-radius: .6rem; cursor: pointer; }
+.permission-table th:not(:first-child), .permission-table td:not(:first-child) { text-align: center; width: 100px; }
+.member-transfer { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap: 1rem; align-items: center; }
+.member-transfer select { min-height: 15rem; }
+.member-actions { display: grid; gap: .5rem; padding-top: 1.8rem; }
+.permission-tree { border-top: 1px solid var(--pms-blue-100); }
+.permission-tree summary { cursor: pointer; padding: .8rem .4rem; font-weight: 600; }
+.permission-modules { margin-left: 1.25rem; border-top: 1px solid var(--pms-blue-50); }
+.permission-modules summary { font-weight: 500; }
+.permission-actions { margin-left: 1.5rem; }
+.permission-action { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem .7rem; border-top: 1px dashed var(--pms-blue-100); cursor: pointer; }
+.permission-action:hover { background: var(--pms-blue-50); }
+.permission-type-rights { margin-left: 1.25rem; background: var(--pms-blue-50); border-radius: .5rem; }
 .error-page { min-height: 100vh; display: grid; place-items: center; padding: 1.5rem; }
 .error-card { width: min(100%, 34rem); padding: 2.5rem; background: #fff; border: 1px solid var(--pms-blue-100); border-radius: 1rem; }
 .error-icon { color: var(--pms-blue-500); font-size: 2.5rem; margin-bottom: .75rem; }
@@ -187,3 +199,14 @@ body.app { background: var(--pms-blue-50); }
 @media (max-width: 1100px) { .dashboard-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media (max-width: 575.98px) { .dashboard-metrics { grid-template-columns: 1fr; } }
 @media (max-width: 575.98px) { .member-transfer { grid-template-columns: 1fr; } .member-actions { display: flex; justify-content: center; padding: 0; } }
+
+/* Simple centered sign-in form */
+.login-page { background: var(--pms-blue-50); }
+.login-page .login-box {
+  max-width: 26rem;
+  padding: 2rem;
+  background: #fff;
+  border: 1px solid var(--pms-blue-200);
+  border-radius: .9rem;
+  box-shadow: 0 .5rem 1.5rem rgba(30, 42, 68, .06);
+}

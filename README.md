@@ -1,97 +1,43 @@
 # Purchasing Management System
 
-A web-based Purchasing Management System built with Spring Boot 4 and Oracle Database, covering the complete purchasing process from request to payment.
+A purchasing workflow web application built with Spring Boot 4, Java 21, Thymeleaf, and Oracle Database.
 
-## Tech Stack
+## Features
 
-- Java 21, Spring Boot 4
-- Spring MVC, Spring Data JPA, JDBC
-- Thymeleaf, Bootstrap 5
-- Oracle Database Free
-- Docker Compose
+- User roles and module permissions
+- Department, supplier, category, and product management
+- Purchase requests, approvals, orders, goods receipts, and payments
+- Dashboard, reports, and soft deletion
 
-## Requirements
-
-- Docker Desktop
-- Java 21 (for local development)
-
-## Getting Started
-
-Start the application and Oracle Database:
+## Run with Docker
 
 ```bash
 docker compose up -d --build
 ```
 
-Check running containers:
+Open <http://localhost:8080>. Demo login: `admin` / `1` (local demo only).
+
+## Connect to Oracle from the terminal
+
+Start the database container, then connect with SQL*Plus:
 
 ```bash
-docker compose ps
+docker compose up -d oracle-db
+docker exec -it purchasing_oracle_db sqlplus purchasing_user/0000@//localhost:1521/FREEPDB1
 ```
 
-View application logs:
+If SQL*Plus is installed on your computer, connect through the published port instead:
 
 ```bash
-docker compose logs -f spring-app
+sqlplus purchasing_user/0000@//localhost:1522/FREEPDB1
 ```
 
-For a fresh database, initialize the schema and demo data using:
+For a fresh database, run `ORACLE/purchasing_schema.sql`, then `ORACLE/demo_data.sql`. See [database setup](doc/run-without-docker.md).
 
-- `ORACLE/purchasing_schema.sql`
-- `ORACLE/demo_data.sql`
-
-See [Database Setup](doc/run-without-docker.md) for instructions.
-
-## Access
-
-Open http://localhost:8080
-
-**Demo Account**
-
-| Username | Password |
-|---|---|
-| `admin` | `1` |
-
-For local demonstration only. Change the default password before deployment.
-
-## Modules
-
-- Dashboard
-- Departments and Suppliers
-- Categories and Products
-- Purchase Requests and Approvals
-- Purchase Orders
-- Goods Receipts
-- Payment Methods and Payments
-- Reports
-
-## Purchasing Workflow
+## Application call path
 
 ```text
-Purchase Request
-       |
-       v
-Approval / Rejection
-       |
-       v
-Purchase Order
-       |
-       v
-Goods Receipt
-       |
-       v
-Payment
-       |
-       v
-Reports
+Browser → Spring Security → MVC Controller → Service → JPA/JDBC → Oracle
+                                              ↓
+Browser ← Thymeleaf HTML ← Model ← Controller
 ```
-
-The system supports purchase request approvals, purchase orders, partial or full goods receipts, and payment tracking.
-
-## Stop Application
-
-```bash
-docker compose down
-```
-
-Database data is persisted in a Docker volume.

@@ -6,7 +6,7 @@
 <body class="app"><main class="error-page"><section class="error-card shadow-sm text-center" role="alert">
 <div class="error-icon"><i class="bi bi-shield-lock" aria-hidden="true"></i></div>
 <p class="text-primary fw-semibold mb-2">403 · Access denied</p><h1 class="h3 fw-bold">You don't have permission to view this page.</h1>
-<p class="text-secondary">You do not have access to this page.</p>
-<div class="d-flex justify-content-center gap-2 flex-wrap"><a class="btn btn-primary" th:href="@{/dashboard}">Back to dashboard</a>
+<p class="text-secondary">Ask an administrator to check your group and its VIEW permission.</p>
+<div class="d-flex justify-content-center gap-2 flex-wrap"><a class="btn btn-primary" th:if="${@permissionService.hasPermission(#authentication,'DASHBOARD','VIEW')}" th:href="@{/dashboard}">Back to dashboard</a>
 <form th:action="@{/logout}" method="post"><button class="btn btn-outline-secondary">Sign out</button></form></div>
 </section></main></body></html>

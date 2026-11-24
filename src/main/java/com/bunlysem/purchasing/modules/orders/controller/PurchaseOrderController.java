@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import org.springframework.http.*;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.util.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Controller @RequestMapping("/orders")
 public class PurchaseOrderController {
@@ -27,7 +29,7 @@ public class PurchaseOrderController {
     public record SupplierChoice(Long id,String name) { }
     public record LineView(String product,BigDecimal quantity,BigDecimal price,BigDecimal amount) { }
 
-    @GetMapping
+    @GetMapping @PreAuthorize("@permissionService.hasPermission(authentication,'ORDERS','VIEW')")
     String list(@RequestParam(defaultValue="") String search, Model model) {
         model.addAttribute("activeCode", "ORDERS");
         model.addAttribute("search",search);
@@ -43,8 +45,8 @@ public class PurchaseOrderController {
     }
     public record OrderRow(Long id, String number, LocalDate date, String status, String supplier, boolean hasReport) { }
 
-    @GetMapping("/new") String createForm(Model model) { return form(model,null); }
-    @PostMapping String create(@RequestParam Long requestId,@RequestParam Long supplierId,@RequestParam String status,
+    @GetMapping("/new") @PreAuthorize("@permissionService.hasPermission(authentication,'ORDERS','CREATE')") String createForm(Model model) { return form(model,null); }
+    @PostMapping @PreAuthorize("@permissionService.hasPermission(authentication,'ORDERS','CREATE')") String create(@RequestParam Long requestId,@RequestParam Long supplierId,@RequestParam String status,
         @RequestParam(required=false) String notes,@RequestParam(required=false) List<Long> detailIds,
         @RequestParam(required=false) List<BigDecimal> quantities,@RequestParam(required=false) List<BigDecimal> prices,
         Authentication auth,Model model,RedirectAttributes redirect) {
@@ -67,12 +69,12 @@ public class PurchaseOrderController {
             redirect.addFlashAttribute("success","Purchase order created."); return "redirect:/orders";
         } catch(IllegalArgumentException ex) { model.addAttribute("error",ex.getMessage()); return form(model,Map.of("requestId",requestId,"supplierId",supplierId,"status",status,"notes",notes==null?"":notes)); }
     }
-    @GetMapping("/{id}") String details(@PathVariable Long id,Model model) {
+    @GetMapping("/{id}") @PreAuthorize("@permissionService.hasPermission(authentication,'ORDERS','VIEW')") String details(@PathVariable Long id,Model model) {
         model.addAttribute("activeCode","ORDERS"); model.addAttribute("order",jdbc.queryForMap("select po.id,po.order_no,po.status,po.notes,s.name supplier from purchase_orders po join suppliers s on s.id=po.supplier_id where po.id=? and po.is_active=1",id));
         model.addAttribute("lines",jdbc.query("select p.name,d.quantity,d.unit_price,d.quantity*d.unit_price from purchase_order_details d join products p on p.id=d.product_id where d.purchase_order_id=? and d.is_active=1",(rs,n)->new LineView(rs.getString(1),rs.getBigDecimal(2),rs.getBigDecimal(3),rs.getBigDecimal(4)),id));
         model.addAttribute("total",jdbc.queryForObject("select coalesce(sum(quantity*unit_price),0) from purchase_order_details where purchase_order_id=? and is_active=1",BigDecimal.class,id)); return "orders/details";
     }
-    @PostMapping("/{id}/status") String status(@PathVariable Long id,@RequestParam String status,RedirectAttributes redirect) {
+    @PostMapping("/{id}/status") @PreAuthorize("@permissionService.hasPermission(authentication,'ORDERS','EDIT')") String status(@PathVariable Long id,@RequestParam String status,RedirectAttributes redirect) {
         if(!List.of("DRAFT","ORDERED","CANCELLED").contains(status)) { redirect.addFlashAttribute("error","Invalid order status."); return "redirect:/orders/"+id; }
         jdbc.update("update purchase_orders set status=? where id=? and is_active=1",status,id); redirect.addFlashAttribute("success","Order status updated."); return "redirect:/orders/"+id;
     }
@@ -82,18 +84,18 @@ public class PurchaseOrderController {
         model.addAttribute("suppliers",jdbc.query("select id,name from suppliers where is_active=1 order by name",(rs,n)->new SupplierChoice(rs.getLong(1),rs.getString(2))));
         model.addAttribute("requestLines",List.of()); return "orders/form";
     }
-    @GetMapping("/request/{requestId}/lines") @ResponseBody List<Map<String,Object>> requestLines(@PathVariable Long requestId) {
+    @GetMapping("/request/{requestId}/lines") @ResponseBody @PreAuthorize("@permissionService.hasPermission(authentication,'ORDERS','CREATE')") List<Map<String,Object>> requestLines(@PathVariable Long requestId) {
         return jdbc.queryForList("select id detail_id,product_id, (select name from products p where p.id=prd.product_id) product_name,quantity,estimated_unit_price from purchase_request_details prd where purchase_request_id=? and is_active=1",requestId);
     }
 
-    @PostMapping("/{id}/report")
+    @PostMapping("/{id}/report") @PreAuthorize("@permissionService.hasPermission(authentication,'ORDERS','EDIT')")
     String generate(@PathVariable Long id, RedirectAttributes redirect) throws IOException {
         reports.generate(id);
         redirect.addFlashAttribute("success", "PDF report generated and saved.");
         return "redirect:/orders";
     }
 
-    @GetMapping("/{id}/report")
+    @GetMapping("/{id}/report") @PreAuthorize("@permissionService.hasPermission(authentication,'ORDERS','VIEW')")
     ResponseEntity<byte[]> report(@PathVariable Long id, @RequestParam(defaultValue = "false") boolean download) {
         PurchaseOrder order = reports.get(id);
         if (order.getReportFile() == null) return ResponseEntity.notFound().build();
