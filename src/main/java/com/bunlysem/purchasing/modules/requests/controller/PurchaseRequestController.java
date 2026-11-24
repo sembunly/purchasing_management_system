@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class PurchaseRequestController {
     public record Line(Long productId, String product, BigDecimal quantity, BigDecimal price, String notes) { }
     public record DepartmentOption(Long id, String name) { }
 
-    @GetMapping String list(@RequestParam(defaultValue="") String search, Model model) {
+    @GetMapping @PreAuthorize("@permissionService.hasPermission(authentication,'REQUESTS','VIEW')") String list(@RequestParam(defaultValue="") String search, Model model) {
         model.addAttribute("activeCode", "REQUESTS"); model.addAttribute("search", search);
         model.addAttribute("requests", jdbc.query("""
           select pr.id,pr.request_no,d.name,u.full_name,pr.status from purchase_requests pr
@@ -29,20 +30,20 @@ public class PurchaseRequestController {
           """, (rs,n)->new RequestRow(rs.getLong(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5)), "%"+search.trim()+"%"));
         return "requests/index";
     }
-    @GetMapping("/new") String createForm(Model model) { return form(model,null); }
-    @GetMapping("/{id}") String details(@PathVariable Long id, Model model) {
+    @GetMapping("/new") @PreAuthorize("@permissionService.hasPermission(authentication,'REQUESTS','CREATE')") String createForm(Model model) { return form(model,null); }
+    @GetMapping("/{id}") @PreAuthorize("@permissionService.hasPermission(authentication,'REQUESTS','VIEW')") String details(@PathVariable Long id, Model model) {
         Map<String,Object> request = header(id); model.addAttribute("activeCode","REQUESTS"); model.addAttribute("request",request);
         model.addAttribute("lines", lines(id)); return "requests/details";
     }
-    @GetMapping("/{id}/edit") String editForm(@PathVariable Long id, Model model) { return form(model,header(id)); }
+    @GetMapping("/{id}/edit") @PreAuthorize("@permissionService.hasPermission(authentication,'REQUESTS','EDIT')") String editForm(@PathVariable Long id, Model model) { return form(model,header(id)); }
 
-    @PostMapping String create(@RequestParam Long departmentId, @RequestParam String status,
+    @PostMapping @PreAuthorize("@permissionService.hasPermission(authentication,'REQUESTS','CREATE')") String create(@RequestParam Long departmentId, @RequestParam String status,
         @RequestParam(required=false) String notes, @RequestParam(required=false) List<Long> productIds,
         @RequestParam(required=false) List<BigDecimal> quantities, @RequestParam(required=false) List<BigDecimal> prices,
         Authentication auth, Model model, RedirectAttributes redirect) {
         return save(null,departmentId,status,notes,productIds,quantities,prices,auth,model,redirect);
     }
-    @PostMapping("/{id}") String update(@PathVariable Long id,@RequestParam Long departmentId,@RequestParam String status,
+    @PostMapping("/{id}") @PreAuthorize("@permissionService.hasPermission(authentication,'REQUESTS','EDIT')") String update(@PathVariable Long id,@RequestParam Long departmentId,@RequestParam String status,
         @RequestParam(required=false) String notes,@RequestParam(required=false) List<Long> productIds,
         @RequestParam(required=false) List<BigDecimal> quantities,@RequestParam(required=false) List<BigDecimal> prices,
         Authentication auth,Model model,RedirectAttributes redirect) {
@@ -79,16 +80,16 @@ public class PurchaseRequestController {
             model.addAttribute("request",values); model.addAttribute("selectedProductIds",pids==null?List.of():pids);model.addAttribute("quantities",qtys==null?List.of():qtys);model.addAttribute("prices",prices==null?List.of():prices); return form(model,values);
         }
     }
-    @PostMapping("/{id}/deactivate") String deactivate(@PathVariable Long id,RedirectAttributes redirect) {
+    @PostMapping("/{id}/deactivate") @PreAuthorize("@permissionService.hasPermission(authentication,'REQUESTS','DELETE')") String deactivate(@PathVariable Long id,RedirectAttributes redirect) {
         Map<String,Object> request=header(id); if(!List.of("DRAFT","PENDING").contains(request.get("status"))) { redirect.addFlashAttribute("error","Only DRAFT or PENDING requests can be deleted."); return "redirect:/requests"; }
         jdbc.update("update purchase_requests set is_active=0 where id=?",id); jdbc.update("update purchase_request_details set is_active=0 where purchase_request_id=?",id); redirect.addFlashAttribute("success","Purchase request deactivated."); return "redirect:/requests";
     }
-    @PostMapping("/{id}/approve") String approve(@PathVariable Long id, Authentication auth, RedirectAttributes redirect) {
+    @PostMapping("/{id}/approve") @PreAuthorize("@permissionService.hasPermission(authentication,'REQUESTS','APPROVE')") String approve(@PathVariable Long id, Authentication auth, RedirectAttributes redirect) {
         int changed=jdbc.update("update purchase_requests set status='APPROVED', approved_by=(select id from users where username=? and is_active=1), approved_at=current_timestamp where id=? and is_active=1 and status='PENDING'",auth.getName(),id);
         redirect.addFlashAttribute(changed==1?"success":"error",changed==1?"Request approved.":"Only PENDING requests can be approved.");
         return "redirect:/requests/"+id;
     }
-    @PostMapping("/{id}/reject") String reject(@PathVariable Long id, @RequestParam String reason, RedirectAttributes redirect) {
+    @PostMapping("/{id}/reject") @PreAuthorize("@permissionService.hasPermission(authentication,'REQUESTS','APPROVE')") String reject(@PathVariable Long id, @RequestParam String reason, RedirectAttributes redirect) {
         String clean=reason==null?"":reason.trim();
         if(clean.isBlank()||clean.length()>500) { redirect.addFlashAttribute("error","Enter a rejection reason of up to 500 characters."); return "redirect:/requests/"+id; }
         int changed=jdbc.update("update purchase_requests set status='REJECTED', notes=? where id=? and is_active=1 and status='PENDING'", "Rejection reason: "+clean,id);
