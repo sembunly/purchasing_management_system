@@ -18,7 +18,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/css/**", "/js/**").permitAll()
-                .requestMatchers("/login", "/access-denied").permitAll()
+                .requestMatchers("/login", "/signup", "/access-denied").permitAll()
                 .requestMatchers(HttpMethod.POST, "/requests/*/approve", "/requests/*/reject")
                     .hasAnyRole("ADMIN", "MANAGER")
                 .anyRequest().authenticated())

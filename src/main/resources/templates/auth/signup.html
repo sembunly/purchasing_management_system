@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/auth :: layout('Create account', 'Create account', 'Register to request and track purchases.', ~{::content})}">
+<head>
+    <title>Create account | Purchasing Management System</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <form th:action="@{/signup}" th:object="${signupForm}" method="post" class="needs-validation" novalidate>
+        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger" role="alert">
+            <div th:each="error : ${#fields.globalErrors()}" th:text="${error}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="fullName" class="form-label fw-semibold">Full name</label>
+            <input id="fullName" type="text" class="form-control form-control-lg"
+                   th:field="*{fullName}"
+                   th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'"
+                   autocomplete="name" required autofocus>
+            <div class="invalid-feedback d-block" th:errors="*{fullName}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="username" class="form-label fw-semibold">Username</label>
+            <input id="username" type="text" class="form-control form-control-lg"
+                   th:field="*{username}"
+                   th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'"
+                   autocomplete="username" required>
+            <div class="invalid-feedback d-block" th:errors="*{username}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label fw-semibold">Email</label>
+            <input id="email" type="email" class="form-control form-control-lg"
+                   th:field="*{email}"
+                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                   autocomplete="email" required>
+            <div class="invalid-feedback d-block" th:errors="*{email}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label fw-semibold">Password</label>
+            <div class="input-group">
+                <input id="password" type="password" class="form-control form-control-lg"
+                       th:field="*{password}"
+                       th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                       autocomplete="new-password" required>
+                <button class="btn btn-outline-secondary password-toggle" type="button"
+                        aria-label="Show password" aria-controls="password" data-password-toggle>
+                    <i class="bi bi-eye" aria-hidden="true" data-password-icon></i>
+                </button>
+                <div class="invalid-feedback d-block" th:errors="*{password}"></div>
+            </div>
+            <div class="form-text">At least 8 characters.</div>
+        </div>
+
+        <div class="mb-4">
+            <label for="confirmPassword" class="form-label fw-semibold">Confirm password</label>
+            <div class="input-group">
+                <input id="confirmPassword" type="password" class="form-control form-control-lg"
+                       th:field="*{confirmPassword}"
+                       th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'"
+                       autocomplete="new-password" required>
+                <button class="btn btn-outline-secondary password-toggle" type="button"
+                        aria-label="Show password" aria-controls="confirmPassword" data-password-toggle>
+                    <i class="bi bi-eye" aria-hidden="true" data-password-icon></i>
+                </button>
+                <div class="invalid-feedback d-block" th:errors="*{confirmPassword}"></div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100" type="submit">Create account</button>
+    </form>
+
+    <p class="small text-secondary mt-4 mb-0">Already have an account? <a th:href="@{/login}">Sign in</a></p>
+</th:block>
+</body>
+</html>
